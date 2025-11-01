@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test App</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1>Hello World</h1>
+    
+    <h3>足し算API (Python)</h3>
+    <div>
+        <input type="number" id="num1" placeholder="数字1">
+        <span> + </span>
+        <input type="number" id="num2" placeholder="数字2">
+    </div>
+    <button id="calcButton" style="margin-top: 10px;">計算する (POST)</button>
+    
+    <h4>結果: <span id="result">...</span></h4>
+    
+    <script>
+        // PWAのService Worker登録 (変更なし)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
+        
+        // ▼▼▼ ここから追加 (API呼び出し処理) ▼▼▼
+        
+        // 要素を取得
+        const num1Input = document.getElementById('num1');
+        const num2Input = document.getElementById('num2');
+        const calcButton = document.getElementById('calcButton');
+        const resultSpan = document.getElementById('result');
+
+        // ボタンがクリックされた時の処理
+        calcButton.addEventListener('click', async () => {
+            resultSpan.textContent = '計算中...';
+
+            try {
+                // PythonのAPI (Netlify Function) を呼び出す
+                const response = await fetch('/.netlify/functions/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    // 2つの数値をJSONにして送る
+                    body: JSON.stringify({
+                        num1: num1Input.value || 0,
+                        num2: num2Input.value || 0
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('サーバーエラーが発生しました');
+                }
+
+                // Pythonから返ってきたJSONを受け取る
+                const data = await response.json();
+                
+                // 結果を表示
+                resultSpan.textContent = data.sum;
+
+            } catch (error) {
+                resultSpan.textContent = `エラー: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
