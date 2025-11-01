@@ -1,0 +1,12 @@
+# ビルド設定
+[build]
+  # (これはデフォルトなので省略してもOKですが、明示的に書いておきます)
+  functions = "netlify/functions"
+
+# ▼▼▼ これが最重要 ▼▼▼
+# 「関数」に関する設定
+[functions]
+  # "add.py" (ファイル名から拡張子を除いたもの) という名前の関数について
+  [functions.add]
+    # これをPythonランタイムとして扱うよう指定する
+    runtime = "python"
