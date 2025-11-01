@@ -1,5 +1,6 @@
 import json
 
+# ▼▼▼ この関数名が「handler」でないと認識されません ▼▼▼
 def handler(event, context):
     # PWAからのPOSTリクエスト以外は無視
     if event['httpMethod'] != 'POST':
@@ -12,7 +13,7 @@ def handler(event, context):
         # POSTされたJSONデータを読み込む
         data = json.loads(event['body'])
         
-        # JSONから数値を取り出す (文字列で来る可能性があるのでfloatに変換)
+        # JSONから数値を取り出す
         num1 = float(data.get('num1', 0))
         num2 = float(data.get('num2', 0))
         
